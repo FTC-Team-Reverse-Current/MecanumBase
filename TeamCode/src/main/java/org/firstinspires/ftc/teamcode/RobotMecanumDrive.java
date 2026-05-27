@@ -58,6 +58,7 @@ public class RobotMecanumDrive extends OpMode{
     public DcMotor frontRightDrive = null;
     public DcMotor backLeftDrive = null;
     public DcMotor backRightDrive = null;
+    public DcMotor intake = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -69,6 +70,7 @@ public class RobotMecanumDrive extends OpMode{
         frontRightDrive = hardwareMap.get(DcMotor.class, "front_right");
         backLeftDrive = hardwareMap.get(DcMotor.class, "back_left");
         backRightDrive = hardwareMap.get(DcMotor.class, "back_right");
+        intake = hardwareMap.get(DcMotor.class, "intake");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left and right sticks forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -106,6 +108,13 @@ public class RobotMecanumDrive extends OpMode{
      */
     @Override
     public void loop() {
+
+        if (gamepad1.a) {
+            intake.setPower(1.0);
+        }
+        else {
+            intake.setPower(0.0);
+        }
 
         // Check for special controls
         if (gamepad1.left_bumper) {
