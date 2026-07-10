@@ -26,60 +26,50 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package org.firstinspires.ftc.teamcode
 
-package org.firstinspires.ftc.teamcode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import dev.nextftc.core.commands.Command
+import dev.nextftc.core.components.BindingsComponent
+import dev.nextftc.core.components.SubsystemComponent
+import dev.nextftc.ftc.Gamepads
+import dev.nextftc.ftc.NextFTCOpMode
+import dev.nextftc.ftc.components.BulkReadComponent
+import dev.nextftc.hardware.driving.MecanumDriverControlled
+import dev.nextftc.hardware.impl.MotorEx
+import org.firstinspires.ftc.teamcode.subsystems.Intake
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import dev.nextftc.core.commands.Command;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
-
-import dev.nextftc.core.components.SubsystemComponent;
-import dev.nextftc.ftc.Gamepads;
-import dev.nextftc.ftc.NextFTCOpMode;
-import dev.nextftc.hardware.driving.MecanumDriverControlled;
-import dev.nextftc.hardware.impl.MotorEx;
-
-@TeleOp(name="Robot: Teleop Mecanum", group="Robot")
-public class RobotMecanumDrive extends NextFTCOpMode {
-
-    private MotorEx frontLeftDrive = new MotorEx("front_left").brakeMode().reversed();
-    private MotorEx frontRightDrive = new MotorEx("front_right").brakeMode().reversed();
-    private MotorEx backLeftDrive = new MotorEx("back_left").brakeMode();
-    private MotorEx backRightDrive = new MotorEx("back_right").brakeMode();
-
-    @Override
-    public void onStartButtonPressed() {
-        // Define and Initialize Motors
+@TeleOp(name = "Robot: Teleop Mecanum", group = "Robot")
+class RobotMecanum : NextFTCOpMode() {
+    init {
         addComponents(
-            new SubsystemComponent(
-                Intake.INSTANCE
-            )
-        );
+            SubsystemComponent(Intake),
+            BulkReadComponent,
+            BindingsComponent
+        )
+    }
 
-        Command driveTrain = new MecanumDriverControlled(
+    private val frontLeftDrive = MotorEx("front_left").brakeMode().reversed()
+    private val frontRightDrive = MotorEx("front_right").brakeMode().reversed()
+    private val backLeftDrive = MotorEx("back_left").brakeMode()
+    private val backRightDrive = MotorEx("back_right").brakeMode()
+
+    override fun onStartButtonPressed() {
+        val driveTrain = MecanumDriverControlled(
             frontLeftDrive,
             frontRightDrive,
             backLeftDrive,
             backRightDrive,
-            Gamepads.gamepad1().leftStickY().negate(),
-            Gamepads.gamepad1().leftStickX(),
-            Gamepads.gamepad1().rightStickX()
-        );
+            Gamepads.gamepad1.leftStickY.negate(),
+            Gamepads.gamepad1.leftStickX,
+            Gamepads.gamepad1.rightStickX
+        )
+        driveTrain()
 
-        driveTrain.schedule();
-
-        // This registers a keybind, it doesn't evaluate it every loop
-        Gamepads.gamepad1().leftBumper()
-            .whenTrue(Intake.INSTANCE.run)
-            .whenFalse(Intake.INSTANCE.stop);
+        (Gamepads.gamepad1.leftBumper) whenBecomesTrue Intake.run
+        (Gamepads.gamepad1.leftBumper) whenBecomesFalse Intake.stop
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData(">", "Robot Ready. Press START.");
+        telemetry.addData(">", "Robot Ready. Press START.")
     }
 }
