@@ -69,6 +69,9 @@ class RobotMecanum : NextFTCOpMode() {
         (Gamepads.gamepad1.leftBumper) whenBecomesTrue Intake.run
         (Gamepads.gamepad1.leftBumper) whenBecomesFalse Intake.stop
 
+        (Gamepads.gamepad1.rightBumper) whenBecomesTrue Intake.reverse
+        (Gamepads.gamepad1.rightBumper) whenBecomesFalse Intake.stop
+
         // Send telemetry message to signify robot waiting;
         telemetry.addData(">", "Robot Ready. Press START.")
     }

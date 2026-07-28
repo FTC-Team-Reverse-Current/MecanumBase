@@ -11,4 +11,6 @@ object Intake : Subsystem {
     var run = SetPower(intakeMotor, 1.0).requires(this)
     var stop = SetPower(intakeMotor, 0.0).requires(this)
 
+    var reverse = SetPower(intakeMotor, -1.0).requires((this))
+
 }
